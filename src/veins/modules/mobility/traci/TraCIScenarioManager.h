@@ -58,18 +58,23 @@ class MobileHostObstacle;
  *
  * See the Veins website <a href="http://veins.car2x.org/"> for a tutorial, documentation, and publications </a>.
  *
- * @author Christoph Sommer, David Eckhoff, Falko Dressler, Zheng Yao, Tobias Mayer, Alvaro Torres Cortes, Luca Bedogni
+ * @author Christoph Sommer, David Eckhoff, Falko Dressler, Zheng Yao, Tobias Mayer, Alvaro Torres Cortes, Luca Bedogni, Ion Turcanu
  *
  * @see TraCIMobility
  * @see TraCIScenarioManagerLaunchd
  *
  */
-class VEINS_API TraCIScenarioManager : public cSimpleModule {
+class VEINS_API TraCIScenarioManager : public cSimpleModule, public cISimulationLifecycleListener {
 public:
     static const simsignal_t traciInitializedSignal;
     static const simsignal_t traciModulePreInitSignal;
     static const simsignal_t traciModuleAddedSignal;
     static const simsignal_t traciModuleRemovedSignal;
+    static const simsignal_t traciModuleUpdatedSignal;
+    static const simsignal_t traciTrafficLightPreInitSignal;
+    static const simsignal_t traciTrafficLightAddedSignal;
+    static const simsignal_t traciTrafficLightRemovedSignal;
+    static const simsignal_t traciTrafficLightUpdatedSignal;
     static const simsignal_t traciTimestepBeginSignal;
     static const simsignal_t traciTimestepEndSignal;
 
@@ -80,6 +85,7 @@ public:
         return std::max(cSimpleModule::numInitStages(), 2);
     }
     void initialize(int stage) override;
+    void preNetworkFinish();
     void finish() override;
     void handleMessage(cMessage* msg) override;
     virtual void handleSelfMsg(cMessage* msg);
@@ -140,6 +146,8 @@ protected:
     bool autoShutdown; /**< Shutdown module as soon as no more vehicles are in the simulation */
     double penetrationRate;
     bool ignoreGuiCommands; /**< whether to ignore all TraCI commands that only make sense when the server has a graphical user interface */
+    int order; // specific position in the multi-client execution order of the TraCI server to request upon connecting (-1: do not request a position)
+    bool ignoreUnknownSubscriptionResults; // whether to (try and) ignore any subscription result we did not request (but another client might have)
     TraCIRegionOfInterest roi; /**< Can return whether a given position lies within the simulation's region of interest. Modules are destroyed and re-created as managed vehicles leave and re-enter the ROI */
     double areaSum;
 
@@ -197,6 +205,9 @@ protected:
     TypeMapping parseMappings(std::string parameter, std::string parameterName, bool allowEmpty = false);
 
     virtual int getPortNumber() const;
+
+    void lifecycleEvent(SimulationLifecycleEventType eventType, cObject* details) override;
+    void listenerRemoved() override;
 };
 
 class VEINS_API TraCIScenarioManagerAccess {

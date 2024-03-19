@@ -35,7 +35,7 @@
 
 // Version number of last release ("major.minor.patch") or an alpha version, if nonzero
 #define VEINS_VERSION_MAJOR 5
-#define VEINS_VERSION_MINOR 0
+#define VEINS_VERSION_MINOR 2
 #define VEINS_VERSION_PATCH 0
 #define VEINS_VERSION_ALPHA 0
 
@@ -68,8 +68,8 @@ using namespace omnetpp;
  * %Veins - The open source vehicular network simulation framework.
  */
 namespace veins {
-#ifdef __cpp_lib_make_unique
-using make_unique = std::make_unique;
+#if (__cplusplus >= 201402L) || (defined __cpp_lib_make_unique)
+using std::make_unique;
 #else
 /**
  * User-defined implementation of std::make_unique.
@@ -77,9 +77,41 @@ using make_unique = std::make_unique;
  * Until Veins builds on C++14, this provides equivalent functionality.
  */
 template <typename T, typename ... Args>
-std::unique_ptr<T> make_unique(Args&& ... args)
+std::unique_ptr<T> make_unique(Args&&... args)
 {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 #endif
+
+// user-defined replacement for std::unary_function, if needed
+#if (defined __cpp_lib_unary_function)
+using std::unary_function;
+#else
+template <typename Arg, typename Result>
+struct unary_function {
+    typedef Arg argument_type;
+    typedef Result result_type;
+};
+#endif
+
+template <typename T>
+cModule* findModuleByPath(T modulePath)
+{
+#if OMNETPP_BUILDNUM < 1506
+    try {
+        return cSimulation::getActiveSimulation()->getModuleByPath(modulePath);
+    }
+    catch (cRuntimeError) {
+        return nullptr;
+    }
+#else
+    return cSimulation::getActiveSimulation()->findModuleByPath(modulePath);
+#endif
+}
+
+#if OMNETPP_VERSION < 0x600
+typedef long intval_t;
+typedef unsigned long uintval_t;
+#endif
+
 } // namespace veins

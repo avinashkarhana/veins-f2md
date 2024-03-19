@@ -74,6 +74,7 @@ public:
         void recordScalars(cSimpleModule& module);
     };
 
+    static const simsignal_t collisionSignal;
     const static simsignal_t parkingStateChangedSignal;
 
     TraCIMobility()
@@ -96,6 +97,7 @@ public:
     virtual void nextPosition(const Coord& position, std::string road_id = "", double speed = -1, double acceleration = -1, Heading heading = Heading::nan, VehicleSignalSet signals = {VehicleSignal::undefined});
     virtual void changePosition();
     virtual void changeParkingState(bool);
+    virtual void collisionOccurred(bool newState);
     virtual void setExternalId(std::string external_id)
     {
         this->external_id = external_id;
@@ -196,8 +198,8 @@ protected:
     double acceleration; /**< updated by nextPosition() */
     VehicleSignalSet signals; /**<updated by nextPosition() */
 
-    cMessage* startAccidentMsg;
-    cMessage* stopAccidentMsg;
+    cMessage* startAccidentMsg = nullptr;
+    cMessage* stopAccidentMsg = nullptr;
     mutable TraCIScenarioManager* manager;
     mutable TraCICommandInterface* commandInterface;
     mutable TraCICommandInterface::Vehicle* vehicleCommandInterface;

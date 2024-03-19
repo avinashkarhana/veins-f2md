@@ -50,13 +50,19 @@ bool VeinsInetSampleApplication::startApplication()
             traciVehicle->setSpeed(0);
 
             auto payload = makeShared<VeinsInetSampleMessage>();
-            timestampPayload(payload);
             payload->setChunkLength(B(100));
             payload->setRoadId(traciVehicle->getRoadId().c_str());
+            timestampPayload(payload);
 
             auto packet = createPacket("accident");
             packet->insertAtBack(payload);
             sendPacket(std::move(packet));
+
+            // host should continue after 30s
+            auto callback = [this]() {
+                traciVehicle->setSpeed(-1);
+            };
+            timerManager.create(veins::TimerSpecification(callback).oneshotIn(SimTime(30, SIMTIME_S)));
         };
         timerManager.create(veins::TimerSpecification(callback).oneshotAt(SimTime(20, SIMTIME_S)));
     }

@@ -29,7 +29,7 @@
 namespace veins {
 
 template <typename Payload>
-struct VEINS_API SignalPayload {
+struct SignalPayload {
     cComponent* source;
     simsignal_t signalID;
     Payload p;
@@ -37,7 +37,7 @@ struct VEINS_API SignalPayload {
 };
 
 template <typename Payload>
-class VEINS_API SignalCallbackListener : public cListener {
+class SignalCallbackListener : public cListener {
 public:
     using Callback = std::function<void (SignalPayload<Payload>)>;
     SignalCallbackListener(Callback callback, cModule* receptor, simsignal_t signal)
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    void receiveSignal(cComponent* source, simsignal_t signalID, Payload p, cObject* details) override
+    virtual void receiveSignal(cComponent* source, simsignal_t signalID, Payload p, cObject* details) override
     {
         ASSERT(signalID == signal);
         callback({source, signalID, p, details});
@@ -74,14 +74,14 @@ public:
         auto callbackListener = make_unique<SignalCallbackListener<bool>>(callback, receptor, signal);
         callbacks.emplace_back(std::move(callbackListener));
     }
-    void subscribeCallback(cModule* receptor, simsignal_t signal, const std::function<void(SignalPayload<long>)> callback)
+    void subscribeCallback(cModule* receptor, simsignal_t signal, const std::function<void(SignalPayload<intval_t>)> callback)
     {
-        auto callbackListener = make_unique<SignalCallbackListener<long>>(callback, receptor, signal);
+        auto callbackListener = make_unique<SignalCallbackListener<intval_t>>(callback, receptor, signal);
         callbacks.emplace_back(std::move(callbackListener));
     }
-    void subscribeCallback(cModule* receptor, simsignal_t signal, const std::function<void(SignalPayload<unsigned long>)> callback)
+    void subscribeCallback(cModule* receptor, simsignal_t signal, const std::function<void(SignalPayload<uintval_t>)> callback)
     {
-        auto callbackListener = make_unique<SignalCallbackListener<unsigned long>>(callback, receptor, signal);
+        auto callbackListener = make_unique<SignalCallbackListener<uintval_t>>(callback, receptor, signal);
         callbacks.emplace_back(std::move(callbackListener));
     }
     void subscribeCallback(cModule* receptor, simsignal_t signal, const std::function<void(SignalPayload<double>)> callback)
