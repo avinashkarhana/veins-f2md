@@ -11,18 +11,22 @@
 
 #include <veins/modules/application/f2md/mdSupport/MDMLib.h>
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 using namespace std;
 
-double MDMLib::calculateDistancePtr(veins::Coord * pos1, veins::Coord * pos2) {
+double MDMLib::calculateDistancePtr(const veins::Coord * pos1, const veins::Coord * pos2) {
     return sqrt(pow(pos1->x - pos2->x, 2.0) + pow(pos1->y - pos2->y, 2.0));
     //   + pow(pos1.z - pos2.z, 2.0));
 }
 
-double MDMLib::calculateSpeedPtr(veins::Coord * Speed) {
+double MDMLib::calculateSpeedPtr(const veins::Coord * Speed) {
     return sqrt(pow(Speed->x, 2.0) + pow(Speed->y, 2.0) + pow(Speed->z, 2.0));
 }
 
-double MDMLib::calculateHeadingAnglePtr(veins::Coord * heading) {
+double MDMLib::calculateHeadingAnglePtr(const veins::Coord * heading) {
     double x2 = 1;
     double y2 = 0;
 

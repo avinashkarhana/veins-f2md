@@ -159,7 +159,7 @@ public:
      */
     Coord getHostSpeed() const
     {
-        return BaseMobility::getCurrentSpeed();
+        return BaseMobility::getCurrentVelocity();
     }
 
     double getplaygroundSizeX() const
@@ -225,9 +225,9 @@ protected:
     /**
      * Calling this method on pointers of type TraCIMobility is deprecated in favor of calling either getHostSpeed or getSpeed.
      */
-    Coord getCurrentSpeed() const override
+    Coord getCurrentVelocity() const override
     {
-        return BaseMobility::getCurrentSpeed();
+        return BaseMobility::getCurrentVelocity();
     }
 };
 

@@ -1421,8 +1421,8 @@ void JosephVeinsApp::handlePositionUpdate(cObject* obj)
         curPositionConfidence = Coord(posEtx, posEty, 0);
 
         curHeadingConfidence = Coord(
-            curHeadingConfidenceOrig.x * exp(-0.1 * mobility->getCurrentSpeed().x),
-            curHeadingConfidenceOrig.y * exp(-0.1 * mobility->getCurrentSpeed().y), 0);
+            curHeadingConfidenceOrig.x * exp(-0.1 * mobility->getCurrentVelocity().x),
+            curHeadingConfidenceOrig.y * exp(-0.1 * mobility->getCurrentVelocity().y), 0);
 
         Coord oldSpeedConfidence = Coord(curSpeedConfidence.x,
             curSpeedConfidence.y, curSpeedConfidence.z);
@@ -1445,7 +1445,7 @@ void JosephVeinsApp::handlePositionUpdate(cObject* obj)
 
         curPosition = relativeOffset.OffsetPosition(
             mobility->getPositionAt(simTime()));
-        curSpeed = relativeOffset.OffsetSpeed(mobility->getCurrentSpeed());
+        curSpeed = relativeOffset.OffsetSpeed(mobility->getCurrentVelocity());
         curHeading = relativeOffset.OffsetHeading(
             mobility->getCurrentDirection());
         curAccel = relativeOffset.OffsetAccel(mobility->getCurrentAcceleration());
@@ -1470,7 +1470,7 @@ void JosephVeinsApp::handlePositionUpdate(cObject* obj)
 
         curPosition = relativeOffset.OffsetPosition(
             mobility->getPositionAt(simTime()));
-        curSpeed = relativeOffset.OffsetSpeed(mobility->getCurrentSpeed());
+        curSpeed = relativeOffset.OffsetSpeed(mobility->getCurrentVelocity());
         curHeading = relativeOffset.OffsetHeading(
             mobility->getCurrentDirection());
         curAccel = relativeOffset.OffsetAccel(mobility->getCurrentAcceleration());

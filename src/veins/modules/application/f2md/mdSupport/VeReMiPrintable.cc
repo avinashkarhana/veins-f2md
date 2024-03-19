@@ -75,14 +75,14 @@ const void VeReMiPrintable::traceJSON(std::string file, std::string JSONObject) 
 
 void VeReMiPrintable::serializeGroundTruth(BasicSafetyMessage *bsm) {
 
-    veins::Coord *pos = &bsm->getSenderPos();
-    veins::Coord *posc = &bsm->getSenderPosConfidence();
-    veins::Coord *spd = &bsm->getSenderSpeed();
-    veins::Coord *spdc = &bsm->getSenderSpeedConfidence();
-    veins::Coord *hed = &bsm->getSenderHeading();
-    veins::Coord *hedc = &bsm->getSenderHeadingConfidence();
-    veins::Coord *acl = &bsm->getSenderAccel();
-    veins::Coord *aclc = &bsm->getSenderAccelConfidence();
+    const veins::Coord *pos = &bsm->getSenderPos();
+    const veins::Coord *posc = &bsm->getSenderPosConfidence();
+    const veins::Coord *spd = &bsm->getSenderSpeed();
+    const veins::Coord *spdc = &bsm->getSenderSpeedConfidence();
+    const veins::Coord *hed = &bsm->getSenderHeading();
+    const veins::Coord *hedc = &bsm->getSenderHeadingConfidence();
+    const veins::Coord *acl = &bsm->getSenderAccel();
+    const veins::Coord *aclc = &bsm->getSenderAccelConfidence();
 
     StringBuffer s;
     Writer<StringBuffer> writer(s);
@@ -165,14 +165,14 @@ void VeReMiPrintable::serializeGroundTruth(BasicSafetyMessage *bsm) {
 }
 
 void VeReMiPrintable::serializeBeacon(BasicSafetyMessage *bsm) {
-    veins::Coord *pos = &bsm->getSenderPos();
-    veins::Coord *posc = &bsm->getSenderPosConfidence();
-    veins::Coord *spd = &bsm->getSenderSpeed();
-    veins::Coord *spdc = &bsm->getSenderSpeedConfidence();
-    veins::Coord *hed = &bsm->getSenderHeading();
-    veins::Coord *hedc = &bsm->getSenderHeadingConfidence();
-    veins::Coord *acl = &bsm->getSenderAccel();
-    veins::Coord *aclc = &bsm->getSenderAccelConfidence();
+    const veins::Coord *pos = &bsm->getSenderPos();
+    const veins::Coord *posc = &bsm->getSenderPosConfidence();
+    const veins::Coord *spd = &bsm->getSenderSpeed();
+    const veins::Coord *spdc = &bsm->getSenderSpeedConfidence();
+    const veins::Coord *hed = &bsm->getSenderHeading();
+    const veins::Coord *hedc = &bsm->getSenderHeadingConfidence();
+    const veins::Coord *acl = &bsm->getSenderAccel();
+    const veins::Coord *aclc = &bsm->getSenderAccelConfidence();
 
     StringBuffer s;
     Writer<StringBuffer> writer(s);

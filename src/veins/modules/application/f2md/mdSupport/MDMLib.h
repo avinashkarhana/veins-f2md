@@ -31,9 +31,9 @@ public:
     double gaussianSum(double x, double sig);
     double boundedGaussianSum(double x1, double x2, double sig);
 
-    double calculateDistancePtr(veins::Coord *, veins::Coord *);
-    double calculateSpeedPtr(veins::Coord * Speed);
-    double calculateHeadingAnglePtr(veins::Coord * heading);
+    double calculateDistancePtr(const veins::Coord *, const veins::Coord *);
+    double calculateSpeedPtr(const veins::Coord * Speed);
+    double calculateHeadingAnglePtr(const veins::Coord * heading);
 
     double calculateDistance(veins::Coord, veins::Coord);
     double calculateSpeed(veins::Coord Speed);

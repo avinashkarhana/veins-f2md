@@ -51,14 +51,14 @@ private:
 
     std::unordered_map<LAddress::L2Type,veins::Coord> *realDynamicMap;
 
-    double ProximityPlausibilityCheck(veins::Coord*testPosition, veins::Coord*myPosition, veins::Coord* myHeading);
+    double ProximityPlausibilityCheck(const veins::Coord*testPosition, veins::Coord*myPosition, veins::Coord* myHeading);
 
-    double RangePlausibilityCheck(veins::Coord*, veins::Coord*);
-    double PositionConsistancyCheck(veins::Coord*, veins::Coord*, double);
+    double RangePlausibilityCheck(veins::Coord*, const veins::Coord*);
+    double PositionConsistancyCheck(veins::Coord*, const veins::Coord*, double);
     double SpeedConsistancyCheck(double, double, double);
-    double PositionSpeedConsistancyCheck(veins::Coord*, veins::Coord *, double, double,
+    double PositionSpeedConsistancyCheck(veins::Coord*, const veins::Coord *, double, double,
             double);
-    double PositionSpeedMaxConsistancyCheck(veins::Coord*, veins::Coord *, double, double,
+    double PositionSpeedMaxConsistancyCheck(veins::Coord*, const veins::Coord *, double, double,
             double);
     double SpeedPlausibilityCheck(double);
     double IntersectionCheck(veins::Coord nodePosition1, veins::Coord nodeSize1, veins::Coord head1,
@@ -67,27 +67,27 @@ private:
     double SuddenAppearenceCheck(veins::Coord*, veins::Coord*);
     double BeaconFrequencyCheck(double, double);
     double PositionPlausibilityCheck(veins::Coord*, double);
-    double PositionHeadingConsistancyCheck(veins::Coord* curHeading,
-            veins::Coord *curPosition, veins::Coord *oldPosition, double deltaTime,
+    double PositionHeadingConsistancyCheck(const veins::Coord* curHeading,
+            const veins::Coord *curPosition, const veins::Coord *oldPosition, double deltaTime,
             double curSpeed);
 
     void KalmanPositionSpeedConsistancyCheck(veins::Coord * curPosition,
-            veins::Coord * curPositionConfidence, veins::Coord * curSpeed, veins::Coord * oldSpeed,
-            veins::Coord * curSpeedConfidence, double time, Kalman_SVI * kalmanSVI,
+            veins::Coord * curPositionConfidence, const veins::Coord * curSpeed, const veins::Coord * curAccel,
+            const veins::Coord * curSpeedConfidence, double time, Kalman_SVI * kalmanSVI,
             double retVal[]);
 
-    void KalmanPositionSpeedScalarConsistancyCheck(veins::Coord * curPosition,veins::Coord * oldPosition,
-            veins::Coord * curPositionConfidence, veins::Coord * curSpeed, veins::Coord * oldSpeed,
-            veins::Coord * curSpeedConfidence, double time, Kalman_SC * kalmanSC,
+    void KalmanPositionSpeedScalarConsistancyCheck(veins::Coord * curPosition, const veins::Coord * oldPosition,
+            veins::Coord * curPositionConfidence, const veins::Coord * curSpeed, const veins::Coord * curAccel,
+            const veins::Coord * curSpeedConfidence, double time, Kalman_SC * kalmanSC,
             double retVal[]);
 
-    double KalmanPositionConsistancyCheck(veins::Coord * curPosition, veins::Coord * oldPosition, veins::Coord * curPosConfidence,
+    double KalmanPositionConsistancyCheck(veins::Coord * curPosition, const veins::Coord * oldPosition, veins::Coord * curPosConfidence,
              double time, Kalman_SI * kalmanSI);
 
-    double KalmanPositionAccConsistancyCheck(veins::Coord * curPosition, veins::Coord * curSpeed, veins::Coord * curPosConfidence,
+    double KalmanPositionAccConsistancyCheck(veins::Coord * curPosition, const veins::Coord * curSpeed, veins::Coord * curPosConfidence,
              double time, Kalman_SI * kalmanSI);
 
-    double KalmanSpeedConsistancyCheck(veins::Coord * curSpeed, veins::Coord * oldSpeed, veins::Coord * curSpeedConfidence,
+    double KalmanSpeedConsistancyCheck(const veins::Coord * curSpeed, const veins::Coord * curAccel, const veins::Coord * curSpeedConfidence,
             double time, Kalman_SI * kalmanSI);
 
     InterTest MultipleIntersectionCheck(NodeTable * detectedNodes,

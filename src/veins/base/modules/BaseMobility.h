@@ -183,7 +183,7 @@ public:
     }
 
     /** @brief Returns the current speed at the current simulation time. */
-    virtual Coord getCurrentSpeed() const
+    virtual Coord getCurrentVelocity() const
     {
         return move.getDirection() * move.getSpeed();
     }

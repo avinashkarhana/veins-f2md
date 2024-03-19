@@ -133,7 +133,7 @@ void ChannelAccess::receiveSignal(cComponent* source, simsignal_t signalID, cObj
         ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
 
         auto heading = Heading::fromCoord(mobility->getCurrentOrientation());
-        antennaPosition = AntennaPosition(getId(), mobility->getPositionAt(simTime()) + antennaOffset.rotatedYaw(-heading.getRad()), mobility->getCurrentSpeed(), simTime());
+        antennaPosition = AntennaPosition(getId(), mobility->getPositionAt(simTime()) + antennaOffset.rotatedYaw(-heading.getRad()), mobility->getCurrentVelocity(), simTime());
         antennaHeading = Heading(heading.getRad() + antennaOffsetYaw);
 
         if (isRegistered) {

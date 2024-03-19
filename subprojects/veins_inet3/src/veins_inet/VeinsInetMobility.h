@@ -54,21 +54,28 @@ public:
 
 public:
     virtual double getMaxSpeed() const override;
-
-    virtual inet::Coord getCurrentPosition() override;
-    virtual inet::Coord getCurrentSpeed() override;
-    inet::Coord getCurrentAcceleration();
-    virtual inet::EulerAngles getCurrentAngularPosition() override;
-    virtual inet::EulerAngles getCurrentAngularSpeed() override
+    virtual int getId() const override{
+        return 0;
+    };
+    virtual const inet::Coord& getCurrentPosition() override;
+    virtual const inet::Coord& getCurrentVelocity() override;
+    virtual const inet::Coord& getCurrentAcceleration() override;
+    virtual const inet::Quaternion& getCurrentAngularPosition() override;
+    virtual const inet::Quaternion& getCurrentAngularVelocity() override
     {
-        return inet::EulerAngles::ZERO;
+        return inet::Quaternion::NIL;
     }
 
-    virtual inet::Coord getConstraintAreaMax() const override
+    virtual const inet::Quaternion& getCurrentAngularAcceleration() override
+    {
+        return inet::Quaternion::NIL;
+    }
+
+    virtual const inet::Coord& getConstraintAreaMax() const override
     {
         return constraintAreaMax;
     }
-    virtual inet::Coord getConstraintAreaMin() const override
+    virtual const inet::Coord& getConstraintAreaMin() const override
     {
         return constraintAreaMin;
     }
@@ -83,7 +90,7 @@ protected:
     inet::Coord lastPosition;
     inet::Coord lastSpeed;
     inet::Coord lastAcceleration;
-    inet::EulerAngles lastOrientation;
+    inet::Quaternion lastOrientation;
 
 protected:
     virtual int numInitStages() const override

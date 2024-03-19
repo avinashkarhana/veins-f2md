@@ -13,6 +13,10 @@
 #define STEP_G 0.1/3
 #define STEP_PI 0.01
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 RelativeOffset::RelativeOffset(veins::Coord *curPosConfidence,
         veins::Coord *curSpeedConfidence, veins::Coord* curHeadingConfidence,veins::Coord* curAccelConfidence,
         double* deltaRPosition, double* deltaThetaPosition, double* deltaSpeed,

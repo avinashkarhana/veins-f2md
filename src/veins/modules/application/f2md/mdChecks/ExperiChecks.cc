@@ -19,6 +19,10 @@
 #include <string>
 #include <vector>
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 using namespace std;
 using namespace boost;
 #define AUG_FACTOR 20
@@ -44,7 +48,7 @@ ExperiChecks::ExperiChecks(int version, unsigned long myPseudonym,
     this->myId = myId;
 }
 
-double ExperiChecks::ProximityPlausibilityCheck(veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
+double ExperiChecks::ProximityPlausibilityCheck(const veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
 {
     double distance = mdmLib.calculateDistancePtr(testPosition, myPosition);
     veins::Coord relativePos = veins::Coord(testPosition->x - myPosition->x,
@@ -95,8 +99,8 @@ double ExperiChecks::RangePlausibilityCheck(veins::Coord* receiverPosition,
 }
 
 double ExperiChecks::PositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double time)
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double time)
 {
     double distance = mdmLib.calculateDistancePtr(curPosition, oldPosition);
     double factor = mdmLib.CircleCircleFactor(distance,
@@ -158,8 +162,8 @@ double ExperiChecks::SpeedPlausibilityCheck(double speed,
 }
 
 double ExperiChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double curSpeed,
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double curSpeed,
     double curSpeedConfidence, double oldspeed, double oldSpeedConfidence,
     double time)
 {
@@ -215,8 +219,8 @@ double ExperiChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
 }
 
 double ExperiChecks::PositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double curSpeed,
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double curSpeed,
     double curSpeedConfidence, double oldspeed, double oldSpeedConfidence,
     double time)
 {
@@ -280,10 +284,10 @@ double ExperiChecks::PositionSpeedConsistancyCheck(veins::Coord* curPosition,
     }
 }
 
-double ExperiChecks::IntersectionCheck(veins::Coord* nodePosition1,
-    veins::Coord* nodePositionConfidence1, veins::Coord* nodePosition2,
-    veins::Coord* nodePositionConfidence2, veins::Coord* nodeHeading1,
-    veins::Coord* nodeHeading2, veins::Coord* nodeSize1, veins::Coord* nodeSize2,
+double ExperiChecks::IntersectionCheck(const veins::Coord* nodePosition1,
+    const veins::Coord* nodePositionConfidence1, const veins::Coord* nodePosition2,
+    const veins::Coord* nodePositionConfidence2, const veins::Coord* nodeHeading1,
+    const veins::Coord* nodeHeading2, veins::Coord* nodeSize1, veins::Coord* nodeSize2,
     double deltaTime)
 {
 
@@ -458,10 +462,10 @@ double ExperiChecks::BeaconFrequencyCheck(double timeNew, double timeOld)
     }
 }
 
-double ExperiChecks::PositionHeadingConsistancyCheck(veins::Coord* curHeading,
-    veins::Coord* curHeadingConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, double deltaTime, double curSpeed,
+double ExperiChecks::PositionHeadingConsistancyCheck(const veins::Coord* curHeading,
+    const veins::Coord* curHeadingConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, const veins::Coord* curPosition,
+    const veins::Coord* curPositionConfidence, double deltaTime, double curSpeed,
     double curSpeedConfidence)
 {
     if (deltaTime < params->POS_HEADING_TIME) {
@@ -621,8 +625,8 @@ static double max_f6 = 1;
 static double max_f7 = 1;
 
 void ExperiChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* curSpeed, veins::Coord* curAccel,
-    veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
+    veins::Coord* curPositionConfidence, const veins::Coord* curSpeed, const veins::Coord* curAccel,
+    const veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
     double retVal[])
 {
 
@@ -704,8 +708,8 @@ void ExperiChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition
 }
 
 void ExperiChecks::KalmanPositionSpeedScalarConsistancyCheck(
-    veins::Coord* curPosition, veins::Coord* oldPosition, veins::Coord* curPositionConfidence,
-    veins::Coord* curSpeed, veins::Coord* curAccel, veins::Coord* curSpeedConfidence,
+    veins::Coord* curPosition, const veins::Coord* oldPosition, veins::Coord* curPositionConfidence,
+    const veins::Coord* curSpeed, const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence,
     double time, Kalman_SC* kalmanSC, double retVal[])
 {
 
@@ -773,7 +777,7 @@ void ExperiChecks::KalmanPositionSpeedScalarConsistancyCheck(
 }
 
 double ExperiChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -820,7 +824,7 @@ double ExperiChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
 }
 
 double ExperiChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -865,8 +869,8 @@ double ExperiChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition
         }
     }
 }
-double ExperiChecks::KalmanSpeedConsistancyCheck(veins::Coord* curSpeed,
-    veins::Coord* curAccel, veins::Coord* curSpeedConfidence, double time,
+double ExperiChecks::KalmanSpeedConsistancyCheck(const veins::Coord* curSpeed,
+    const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {

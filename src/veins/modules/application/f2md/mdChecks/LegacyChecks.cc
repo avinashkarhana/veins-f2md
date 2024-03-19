@@ -21,6 +21,10 @@
 #include <vector>
 #include <algorithm> // std::max
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 using namespace std;
 using namespace boost;
 
@@ -50,7 +54,7 @@ LegacyChecks::LegacyChecks(int version, unsigned long myPseudonym,
     this->params = params;
 }
 
-double LegacyChecks::ProximityPlausibilityCheck(veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
+double LegacyChecks::ProximityPlausibilityCheck(const veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
 {
     double distance = mdmLib.calculateDistancePtr(testPosition, myPosition);
     veins::Coord relativePos = veins::Coord(testPosition->x - myPosition->x,
@@ -82,7 +86,7 @@ double LegacyChecks::ProximityPlausibilityCheck(veins::Coord* testPosition, vein
 }
 
 double LegacyChecks::RangePlausibilityCheck(veins::Coord* senderPosition,
-    veins::Coord* receiverPosition)
+    const veins::Coord* receiverPosition)
 {
     double distance = mdmLib.calculateDistancePtr(senderPosition,
         receiverPosition);
@@ -96,7 +100,7 @@ double LegacyChecks::RangePlausibilityCheck(veins::Coord* senderPosition,
 }
 
 double LegacyChecks::PositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, double time)
+    const veins::Coord* oldPosition, double time)
 {
     double distance = mdmLib.calculateDistancePtr(curPosition, oldPosition);
 
@@ -140,7 +144,7 @@ double LegacyChecks::SpeedConsistancyCheck(double curSpeed, double oldspeed,
 }
 
 double LegacyChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, double curSpeed, double oldspeed, double time)
+    const veins::Coord* oldPosition, double curSpeed, double oldspeed, double time)
 {
     if (time < params->MAX_TIME_DELTA) {
         double distance = mdmLib.calculateDistancePtr(curPosition, oldPosition);
@@ -170,7 +174,7 @@ double LegacyChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
 }
 
 double LegacyChecks::PositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, double curSpeed, double oldspeed, double time)
+    const veins::Coord* oldPosition, double curSpeed, double oldspeed, double time)
 {
     if (time < params->MAX_TIME_DELTA) {
         double distance = mdmLib.calculateDistancePtr(curPosition, oldPosition);
@@ -360,8 +364,8 @@ double LegacyChecks::BeaconFrequencyCheck(double timeNew, double timeOld)
     }
 }
 
-double LegacyChecks::PositionHeadingConsistancyCheck(veins::Coord* curHeading,
-    veins::Coord* curPosition, veins::Coord* oldPosition, double deltaTime,
+double LegacyChecks::PositionHeadingConsistancyCheck(const veins::Coord* curHeading,
+    const veins::Coord* curPosition, const veins::Coord* oldPosition, double deltaTime,
     double curSpeed)
 {
     if (deltaTime < params->POS_HEADING_TIME) {
@@ -397,8 +401,8 @@ double LegacyChecks::PositionHeadingConsistancyCheck(veins::Coord* curHeading,
 }
 
 void LegacyChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* curSpeed, veins::Coord* curAccel,
-    veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
+    veins::Coord* curPositionConfidence, const veins::Coord* curSpeed, const veins::Coord* curAccel,
+    const veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
     double retVal[])
 {
 
@@ -480,8 +484,8 @@ void LegacyChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition
 }
 
 void LegacyChecks::KalmanPositionSpeedScalarConsistancyCheck(
-    veins::Coord* curPosition, veins::Coord* oldPosition, veins::Coord* curPositionConfidence,
-    veins::Coord* curSpeed, veins::Coord* curAccel, veins::Coord* curSpeedConfidence,
+    veins::Coord* curPosition, const veins::Coord* oldPosition, veins::Coord* curPositionConfidence,
+    const veins::Coord* curSpeed, const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence,
     double time, Kalman_SC* kalmanSC, double retVal[])
 {
 
@@ -549,7 +553,7 @@ void LegacyChecks::KalmanPositionSpeedScalarConsistancyCheck(
 }
 
 double LegacyChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -596,7 +600,7 @@ double LegacyChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
 }
 
 double LegacyChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -641,8 +645,8 @@ double LegacyChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition
         }
     }
 }
-double LegacyChecks::KalmanSpeedConsistancyCheck(veins::Coord* curSpeed,
-    veins::Coord* curAccel, veins::Coord* curSpeedConfidence, double time,
+double LegacyChecks::KalmanSpeedConsistancyCheck(const veins::Coord* curSpeed,
+    const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {

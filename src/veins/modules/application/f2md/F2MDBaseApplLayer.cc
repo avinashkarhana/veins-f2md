@@ -195,7 +195,7 @@ void F2MDBaseApplLayer::handlePositionUpdate(cObject* obj)
 {
     ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
     curPosition = mobility->getPositionAt(simTime());
-    curSpeed = mobility->getCurrentSpeed();
+    curSpeed = mobility->getCurrentVelocity();
 }
 
 void F2MDBaseApplLayer::handleParkingUpdate(cObject* obj)

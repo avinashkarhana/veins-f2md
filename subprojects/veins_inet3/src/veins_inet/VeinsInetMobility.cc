@@ -28,173 +28,172 @@
 #undef INET_IMPORT
 #include "inet/common/INETMath.h"
 #include "veins_inet/VeinsInetMobility.h"
-#include "inet/visualizer/mobility/MobilityCanvasVisualizer.h"
+#include "inet/visualizer/canvas/mobility/MobilityCanvasVisualizer.h"
 
 namespace veins {
 
-Register_Class(VeinsInetMobility);
+    Register_Class(VeinsInetMobility);
 
-//
-// Public, lifecycle
-//
+    //
+    // Public, lifecycle
+    //
 
-VeinsInetMobility::VeinsInetMobility()
-    : visualRepresentation(nullptr)
-    , constraintAreaMin(inet::Coord::ZERO)
-    , constraintAreaMax(inet::Coord::ZERO)
-    , lastPosition(inet::Coord::ZERO)
-    , lastSpeed(inet::Coord::ZERO)
-    , lastOrientation(inet::EulerAngles::ZERO)
-{
-    lastAcceleration = inet::Coord::ZERO;
-}
-
-//
-// Public, called from manager
-//
-
-void VeinsInetMobility::preInitialize(std::string external_id, const inet::Coord& position, std::string road_id, double speed, double acceleration, double angle)
-{
-    Enter_Method_Silent();
-    this->external_id = external_id;
-    lastPosition = position;
-    lastSpeed = inet::Coord(cos(angle), -sin(angle)) * speed;
-    lastAcceleration = inet::Coord(cos(angle), -sin(angle)) * acceleration;
-    lastOrientation.alpha = -angle;
-}
-
-void VeinsInetMobility::nextPosition(const inet::Coord& position, std::string road_id, double speed, double acceleration, double angle)
-{
-    Enter_Method_Silent();
-    lastPosition = position;
-    lastSpeed = inet::Coord(cos(angle), -sin(angle)) * speed;
-    lastAcceleration = inet::Coord(cos(angle), -sin(angle)) * acceleration;
-    lastOrientation.alpha = -angle;
-
-    // Update display string to show node is getting updates
-    auto hostMod = getParentModule();
-    if (std::string(hostMod->getDisplayString().getTagArg("veins", 0)) == ". ") {
-        hostMod->getDisplayString().setTagArg("veins", 0, " .");
-    }
-    else {
-        hostMod->getDisplayString().setTagArg("veins", 0, ". ");
+    VeinsInetMobility::VeinsInetMobility()
+        : visualRepresentation(nullptr)
+        , constraintAreaMin(inet::Coord::ZERO)
+        , constraintAreaMax(inet::Coord::ZERO)
+        , lastPosition(inet::Coord::ZERO)
+        , lastSpeed(inet::Coord::ZERO)
+        , lastOrientation(inet::Quaternion::NIL)
+    {
+        lastAcceleration = inet::Coord::ZERO;
     }
 
-    emitMobilityStateChangedSignal();
-    updateVisualRepresentation();
-}
+    //
+    // Public, called from manager
+    //
 
-//
-// Public, implementing IMobility interface
-//
+    void VeinsInetMobility::preInitialize(std::string external_id, const inet::Coord& position, std::string road_id, double speed, double acceleration, double angle)
+    {
+        Enter_Method_Silent();
+        this->external_id = external_id;
+        lastPosition = position;
+        lastSpeed = inet::Coord(cos(angle), -sin(angle)) * speed;
+        lastAcceleration = inet::Coord(cos(angle), -sin(angle)) * acceleration;
+        lastOrientation.setS(-angle);
+    }
 
-double VeinsInetMobility::getMaxSpeed() const
-{
-    return NaN;
-}
+    void VeinsInetMobility::nextPosition(const inet::Coord& position, std::string road_id, double speed, double acceleration, double angle)
+    {
+        Enter_Method_Silent();
+        lastPosition = position;
+        lastSpeed = inet::Coord(cos(angle), -sin(angle)) * speed;
+        lastAcceleration = inet::Coord(cos(angle), -sin(angle)) * acceleration;
+        lastOrientation.setS(-angle);
 
-inet::Coord VeinsInetMobility::getCurrentPosition()
-{
-    return lastPosition;
-}
-
-inet::Coord VeinsInetMobility::getCurrentSpeed()
-{
-    return lastSpeed;
-}
-
-inet::Coord VeinsInetMobility::getCurrentAcceleration()
-{
-    return lastAcceleration;
-}
-
-inet::EulerAngles VeinsInetMobility::getCurrentAngularPosition()
-{
-    return lastOrientation;
-}
-
-
-//
-// Protected
-//
-
-void VeinsInetMobility::initialize(int stage)
-{
-    cSimpleModule::initialize(stage);
-    // EV_TRACE << "initializing VeinsInetMobility stage " << stage << endl;
-    if (stage == inet::INITSTAGE_LOCAL) {
-        constraintAreaMin.x = par("constraintAreaMinX");
-        constraintAreaMin.y = par("constraintAreaMinY");
-        constraintAreaMin.z = par("constraintAreaMinZ");
-        constraintAreaMax.x = par("constraintAreaMaxX");
-        constraintAreaMax.y = par("constraintAreaMaxY");
-        constraintAreaMax.z = par("constraintAreaMaxZ");
-        bool visualizeMobility = par("visualizeMobility");
-        if (visualizeMobility) {
-            visualRepresentation = inet::getModuleFromPar<cModule>(par("visualRepresentation"), this);
+        // Update display string to show node is getting updates
+        auto hostMod = getParentModule();
+        if (std::string(hostMod->getDisplayString().getTagArg("veins", 0)) == ". ") {
+            hostMod->getDisplayString().setTagArg("veins", 0, " .");
         }
-    }
-    else if (stage == inet::INITSTAGE_PHYSICAL_ENVIRONMENT_2) {
-        if (visualRepresentation != nullptr) {
-            auto visualizationTarget = visualRepresentation->getParentModule();
-            canvasProjection = inet::CanvasProjection::getCanvasProjection(visualizationTarget->getCanvas());
+        else {
+            hostMod->getDisplayString().setTagArg("veins", 0, ". ");
         }
+
         emitMobilityStateChangedSignal();
         updateVisualRepresentation();
     }
-}
 
-void VeinsInetMobility::handleMessage(cMessage* message)
-{
-    throw cRuntimeError("This module does not handle messages");
-}
+    //
+    // Public, implementing IMobility interface
+    //
 
-void VeinsInetMobility::updateVisualRepresentation()
-{
-    EV_DEBUG << "current position = " << lastPosition << endl;
-#ifdef WITH_VISUALIZERS
-    if (hasGUI() && visualRepresentation != nullptr) {
-        inet::visualizer::MobilityCanvasVisualizer::setPosition(visualRepresentation, canvasProjection->computeCanvasPoint(lastPosition));
+    double VeinsInetMobility::getMaxSpeed() const
+    {
+        return NaN;
     }
-#else
-    auto position = canvasProjection->computeCanvasPoint(lastPosition);
-    char buf[32];
-    snprintf(buf, sizeof(buf), "%lf", position.x);
-    buf[sizeof(buf) - 1] = 0;
-    visualRepresentation->getDisplayString().setTagArg("p", 0, buf);
-    snprintf(buf, sizeof(buf), "%lf", position.y);
-    buf[sizeof(buf) - 1] = 0;
-    visualRepresentation->getDisplayString().setTagArg("p", 1, buf);
-#endif
-}
 
-void VeinsInetMobility::emitMobilityStateChangedSignal()
-{
-    emit(mobilityStateChangedSignal, this);
-}
+    const inet::Coord& VeinsInetMobility::getCurrentPosition()
+    {
+        return lastPosition;
+    }
 
-std::string VeinsInetMobility::getExternalId() const
-{
-    if (external_id == "") throw cRuntimeError("VeinsInetMobility::getExternalId called with no external_id set yet");
-    return external_id;
-}
+    const inet::Coord& VeinsInetMobility::getCurrentVelocity()
+    {
+        return lastSpeed;
+    }
 
-TraCIScenarioManager* VeinsInetMobility::getManager() const
-{
-    if (!manager) manager = TraCIScenarioManagerAccess().get();
-    return manager;
-}
+    const inet::Coord& VeinsInetMobility::getCurrentAcceleration()
+    {
+        return lastAcceleration;
+    }
 
-TraCICommandInterface* VeinsInetMobility::getCommandInterface() const
-{
-    if (!commandInterface) commandInterface = getManager()->getCommandInterface();
-    return commandInterface;
-}
+    const inet::Quaternion& VeinsInetMobility::getCurrentAngularPosition()
+    {
+        return lastOrientation;
+    }
 
-TraCICommandInterface::Vehicle* VeinsInetMobility::getVehicleCommandInterface() const
-{
-    if (!vehicleCommandInterface) vehicleCommandInterface = new TraCICommandInterface::Vehicle(getCommandInterface()->vehicle(getExternalId()));
-    return vehicleCommandInterface;
-}
+    //
+    // Protected
+    //
+
+    void VeinsInetMobility::initialize(int stage)
+    {
+        cSimpleModule::initialize(stage);
+        // EV_TRACE << "initializing VeinsInetMobility stage " << stage << endl;
+        if (stage == inet::INITSTAGE_LOCAL) {
+            constraintAreaMin.x = par("constraintAreaMinX");
+            constraintAreaMin.y = par("constraintAreaMinY");
+            constraintAreaMin.z = par("constraintAreaMinZ");
+            constraintAreaMax.x = par("constraintAreaMaxX");
+            constraintAreaMax.y = par("constraintAreaMaxY");
+            constraintAreaMax.z = par("constraintAreaMaxZ");
+            bool visualizeMobility = par("visualizeMobility");
+            if (visualizeMobility) {
+                visualRepresentation = inet::getModuleFromPar<cModule>(par("visualRepresentation"), this);
+            }
+        }
+        else if (stage == inet::INITSTAGE_PHYSICAL_ENVIRONMENT) {
+            if (visualRepresentation != nullptr) {
+                auto visualizationTarget = visualRepresentation->getParentModule();
+                canvasProjection = inet::CanvasProjection::getCanvasProjection(visualizationTarget->getCanvas());
+            }
+            emitMobilityStateChangedSignal();
+            updateVisualRepresentation();
+        }
+    }
+
+    void VeinsInetMobility::handleMessage(cMessage* message)
+    {
+        throw cRuntimeError("This module does not handle messages");
+    }
+
+    void VeinsInetMobility::updateVisualRepresentation()
+    {
+        EV_DEBUG << "current position = " << lastPosition << endl;
+    #ifdef WITH_VISUALIZERS
+        if (hasGUI() && visualRepresentation != nullptr) {
+            inet::visualizer::MobilityCanvasVisualizer::setPosition(visualRepresentation, canvasProjection->computeCanvasPoint(lastPosition));
+        }
+    #else
+        auto position = canvasProjection->computeCanvasPoint(lastPosition);
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%lf", position.x);
+        buf[sizeof(buf) - 1] = 0;
+        visualRepresentation->getDisplayString().setTagArg("p", 0, buf);
+        snprintf(buf, sizeof(buf), "%lf", position.y);
+        buf[sizeof(buf) - 1] = 0;
+        visualRepresentation->getDisplayString().setTagArg("p", 1, buf);
+    #endif
+    }
+
+    void VeinsInetMobility::emitMobilityStateChangedSignal()
+    {
+        emit(mobilityStateChangedSignal, this);
+    }
+
+    std::string VeinsInetMobility::getExternalId() const
+    {
+        if (external_id == "") throw cRuntimeError("VeinsInetMobility::getExternalId called with no external_id set yet");
+        return external_id;
+    }
+
+    TraCIScenarioManager* VeinsInetMobility::getManager() const
+    {
+        if (!manager) manager = TraCIScenarioManagerAccess().get();
+        return manager;
+    }
+
+    TraCICommandInterface* VeinsInetMobility::getCommandInterface() const
+    {
+        if (!commandInterface) commandInterface = getManager()->getCommandInterface();
+        return commandInterface;
+    }
+
+    TraCICommandInterface::Vehicle* VeinsInetMobility::getVehicleCommandInterface() const
+    {
+        if (!vehicleCommandInterface) vehicleCommandInterface = new TraCICommandInterface::Vehicle(getCommandInterface()->vehicle(getExternalId()));
+        return vehicleCommandInterface;
+    }
 
 } // namespace veins

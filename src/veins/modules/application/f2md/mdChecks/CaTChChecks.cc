@@ -19,6 +19,10 @@
 #include <string>
 #include <vector>
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 using namespace std;
 using namespace boost;
 
@@ -43,7 +47,7 @@ CaTChChecks::CaTChChecks(int version, unsigned long myPseudonym,
     this->myId = myId;
 }
 
-double CaTChChecks::ProximityPlausibilityCheck(veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
+double CaTChChecks::ProximityPlausibilityCheck(const veins::Coord* testPosition, veins::Coord* myPosition, veins::Coord* myHeading)
 {
     double distance = mdmLib.calculateDistancePtr(testPosition, myPosition);
     veins::Coord relativePos = veins::Coord(testPosition->x - myPosition->x,
@@ -91,8 +95,8 @@ double CaTChChecks::RangePlausibilityCheck(veins::Coord* receiverPosition,
 }
 
 double CaTChChecks::PositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double time)
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double time)
 {
     double distance = mdmLib.calculateDistancePtr(curPosition, oldPosition);
     double factor = mdmLib.CircleCircleFactor(distance,
@@ -145,8 +149,8 @@ double CaTChChecks::SpeedPlausibilityCheck(double speed,
 }
 
 double CaTChChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double curSpeed,
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double curSpeed,
     double curSpeedConfidence, double oldspeed, double oldSpeedConfidence,
     double time)
 {
@@ -210,8 +214,8 @@ double CaTChChecks::PositionSpeedMaxConsistancyCheck(veins::Coord* curPosition,
 }
 
 double CaTChChecks::PositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, double curSpeed,
+    veins::Coord* curPositionConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, double curSpeed,
     double curSpeedConfidence, double oldspeed, double oldSpeedConfidence,
     double time)
 {
@@ -275,10 +279,10 @@ double CaTChChecks::PositionSpeedConsistancyCheck(veins::Coord* curPosition,
     }
 }
 
-double CaTChChecks::IntersectionCheck(veins::Coord* nodePosition1,
-    veins::Coord* nodePositionConfidence1, veins::Coord* nodePosition2,
-    veins::Coord* nodePositionConfidence2, veins::Coord* nodeHeading1,
-    veins::Coord* nodeHeading2, veins::Coord* nodeSize1, veins::Coord* nodeSize2,
+double CaTChChecks::IntersectionCheck(const veins::Coord* nodePosition1,
+    const veins::Coord* nodePositionConfidence1, const veins::Coord* nodePosition2,
+    const veins::Coord* nodePositionConfidence2, const veins::Coord* nodeHeading1,
+    const veins::Coord* nodeHeading2, veins::Coord* nodeSize1, veins::Coord* nodeSize2,
     double deltaTime)
 {
 
@@ -454,10 +458,10 @@ double CaTChChecks::BeaconFrequencyCheck(double timeNew, double timeOld)
     }
 }
 
-double CaTChChecks::PositionHeadingConsistancyCheck(veins::Coord* curHeading,
-    veins::Coord* curHeadingConfidence, veins::Coord* oldPosition,
-    veins::Coord* oldPositionConfidence, veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, double deltaTime, double curSpeed,
+double CaTChChecks::PositionHeadingConsistancyCheck(const veins::Coord* curHeading,
+    const veins::Coord* curHeadingConfidence, const veins::Coord* oldPosition,
+    const veins::Coord* oldPositionConfidence, const veins::Coord* curPosition,
+    const veins::Coord* curPositionConfidence, double deltaTime, double curSpeed,
     double curSpeedConfidence)
 {
     if (deltaTime < params->POS_HEADING_TIME) {
@@ -605,8 +609,8 @@ static double max_f6 = 1;
 static double max_f7 = 1;
 
 void CaTChChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curPositionConfidence, veins::Coord* curSpeed, veins::Coord* curAccel,
-    veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
+    veins::Coord* curPositionConfidence, const veins::Coord* curSpeed, const veins::Coord* curAccel,
+    const veins::Coord* curSpeedConfidence, double time, Kalman_SVI* kalmanSVI,
     double retVal[])
 {
 
@@ -688,8 +692,8 @@ void CaTChChecks::KalmanPositionSpeedConsistancyCheck(veins::Coord* curPosition,
 }
 
 void CaTChChecks::KalmanPositionSpeedScalarConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, veins::Coord* curPositionConfidence, veins::Coord* curSpeed,
-    veins::Coord* curAccel, veins::Coord* curSpeedConfidence, double time,
+    const veins::Coord* oldPosition, veins::Coord* curPositionConfidence, const veins::Coord* curSpeed,
+    const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence, double time,
     Kalman_SC* kalmanSC, double retVal[])
 {
 
@@ -757,7 +761,7 @@ void CaTChChecks::KalmanPositionSpeedScalarConsistancyCheck(veins::Coord* curPos
 }
 
 double CaTChChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* oldPosition, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -804,7 +808,7 @@ double CaTChChecks::KalmanPositionConsistancyCheck(veins::Coord* curPosition,
 }
 
 double CaTChChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition,
-    veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
+    const veins::Coord* curSpeed, veins::Coord* curPosConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {
@@ -849,8 +853,8 @@ double CaTChChecks::KalmanPositionAccConsistancyCheck(veins::Coord* curPosition,
         }
     }
 }
-double CaTChChecks::KalmanSpeedConsistancyCheck(veins::Coord* curSpeed,
-    veins::Coord* curAccel, veins::Coord* curSpeedConfidence, double time,
+double CaTChChecks::KalmanSpeedConsistancyCheck(const veins::Coord* curSpeed,
+    const veins::Coord* curAccel, const veins::Coord* curSpeedConfidence, double time,
     Kalman_SI* kalmanSI)
 {
     if (!kalmanSI->isInit()) {

@@ -12,6 +12,10 @@
 #include <veins/modules/application/f2md/mdSupport/GaussianRandom.h>
 #define EPSILON_G 0.05
 
+#ifndef PI
+#define PI        3.141592653589793
+#endif
+
 GaussianRandom::GaussianRandom(Coord* curPosConfidence, Coord* curSpeedConfidence, Coord* curHeadingConfidence) {
     this->curPosConfidence = curPosConfidence;
     this->curSpeedConfidence = curSpeedConfidence;
